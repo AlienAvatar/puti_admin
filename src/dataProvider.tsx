@@ -25,18 +25,6 @@ const dataProvider = {
             
             if(result != null && result.data.status == "success"){
                 article_data_context = result.data.articles;
-
-                // let data_list = [];
-                // let res_list = result.data.articles;
-                // res_list.forEach(element => {
-                //     let item = {};
-                //     item['id'] = element.num;
-                //     item['title'] = element.title;
-                //     item['content'] = element.content;
-                //     item['author'] = element.author;
-                //     data_list.push(item);
-                // });
-
                 return { 
                     data: result.data.articles,
                     pageInfo: { page: 1, perPage: 10 },
@@ -68,8 +56,13 @@ const dataProvider = {
             }
                 
         }else if(resource === 'users'){
+            let q = "";
+            if(params.filter.q){
+                q = params.filter.q;
+            }
+            const list_url = `${config.PATH_USER_LIST}${q}`;
             const token = localStorage.getItem('token');
-            const result = await axios.get(config.PATH_USER_LIST, {
+            const result = await axios.get(list_url, {
                 headers: {
                     'token': token,
                 },

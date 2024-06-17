@@ -43,6 +43,7 @@ import {
     BulkDeleteButton,
     NumberField,
     BooleanField,
+    DeleteButton,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import {
     Box,
@@ -60,7 +61,6 @@ import axios from 'axios';
 import * as config from "../config";
 import { Editor } from '@tiptap/react';
 import { useFormContext } from 'react-hook-form';
-import { DeleteButton } from '../components/iDeleteButton';
 const EditActions = ({ hasShow }: EditActionsProps) => (
     <TopToolbar>
         <CloneButton className="button-clone" />

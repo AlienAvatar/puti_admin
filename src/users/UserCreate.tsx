@@ -24,7 +24,7 @@ const UserEditToolbar = ({ permissions, ...props }) => {
 
     return (
         <Toolbar {...props}>
-            <SaveButton label="user.action.save_and_show" />
+            <SaveButton label="保存" />
             {permissions === 'admin' && (
                 <SaveButton
                     label="user.action.save_and_add"
@@ -56,6 +56,7 @@ const isValidName = async value =>
 
 const UserCreate = () => {
     const { permissions } = usePermissions();
+    console.log('permissions', permissions);
     const unique = useUnique();
     return (
         <Create aside={<Aside />} redirect="show">
@@ -64,12 +65,12 @@ const UserCreate = () => {
                 warnWhenUnsavedChanges
                 toolbar={<UserEditToolbar permissions={permissions} />}
             >
-                <TextInput source="username" defaultValue="123" autoFocus validate={[required(), unique()]} />
-                <TextInput source="password" defaultValue="123" validate={[required()]} />
-                <TextInput source="re_password" defaultValue="123" validate={[required()]} />
-                <TextInput source="nickname" defaultValue="123" validate={[required()]} />
+                <TextInput source="username" autoFocus validate={[required(), unique()]} />
+                <TextInput source="password" validate={[required()]} />
+                <TextInput source="re_password" validate={[required()]} />
+                <TextInput source="nickname" validate={[required()]} />
                 {/* <FileInput source="avatar" accept="image/*" /> */}
-                <TextInput source="email" defaultValue="123" validate={[required()]} />
+                <TextInput source="email" validate={[required()]} />
             </SimpleForm>
         </Create>
     );

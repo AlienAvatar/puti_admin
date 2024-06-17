@@ -38,8 +38,6 @@ import {
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import * as config from "../config";
-//import {EditButton} from '../components/iEditButton'
-// import { ShowButton } from '../components/iShowButton'
 import { article_data_context } from '../dataProvider';
 
 //import ResetViewsButton from './ResetViewsButton';

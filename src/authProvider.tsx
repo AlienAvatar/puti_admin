@@ -51,7 +51,6 @@ export default{
     },
     checkError: ({ status }) => {
         if (status === 401) {
-            window.location.hash = '/login';
             return Promise.reject();
         }
         return  status === 403

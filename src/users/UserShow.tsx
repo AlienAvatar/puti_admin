@@ -7,7 +7,7 @@ import PersonIcon from '@mui/icons-material/Person';
 const UserShow = () => {
     const { permissions } = usePermissions();
     return (
-        <Show>
+        <Show title="展示">
             <SimpleShowLayout>
                 <TextField source="id" />
                 <Avatar>

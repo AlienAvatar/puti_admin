@@ -24,8 +24,7 @@ import {ListActionToolbar} from "../components/iListActionToolbar"
 const getUserFilters = permissions =>
     [
         <SearchInput source="q" alwaysOn />,
-        <TextInput source="name" />,
-        permissions === 'admin' ? <TextInput source="role" /> : null,
+        <TextInput source="nickname" />,
     ].filter(filter => filter !== null);
 
 const UserBulkActionButtons = props => (
@@ -33,20 +32,16 @@ const UserBulkActionButtons = props => (
 );
 
 const rowClick = memoize(permissions => (record) => {
-    console.log('record', record);
-    return permissions === 'admin'
-        ? Promise.resolve('edit')
-        : Promise.resolve('show');
+    return Promise.resolve('show');
 });
 
 const UserList = (props) => {
     const { permissions } = usePermissions();
-    console.log('props', props);
     return (
         <List
             filters={getUserFilters(permissions)}
             filterDefaultValues={{ role: 'user' }}
-            sort={{ field: 'name', order: 'ASC' }}
+            sort={{ field: 'nickname', order: 'ASC' }}
             aside={<Aside />}
         >
             {useMediaQuery((theme: Theme) => theme.breakpoints.down('md')) ? (
@@ -76,8 +71,8 @@ const UserList = (props) => {
                         sortable={false}
                     />
                     <ListActionToolbar>
-                        <EditButton />
-                        <ShowButton />
+                        <EditButton label="编辑"/>
+                        <ShowButton label="展示"/>
                     </ListActionToolbar> 
                 </Datagrid>
             )}

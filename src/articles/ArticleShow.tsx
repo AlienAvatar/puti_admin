@@ -23,12 +23,12 @@ import {
     Show,
     SimpleShowLayout,
     ReferenceManyField,
+    useShowController,
 } from 'react-admin';
 import ArticleTitle from './ArticleTitle';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as config from "../config";
-import { useShowController } from '../components/iuseShowController';
 import { getParameterFromUrl } from '../utils';
 // import { ReferenceManyField } from "../components/iReferenceManyField"
 const CreateRelatedComment = () => {
@@ -49,8 +49,8 @@ const CreateRelatedComment = () => {
  * @returns 文章详情页面组件
  */
 const ArticleShow = () => {
-    const num = getParameterFromUrl(window.location.hash, 'articles');
-    const controllerProps = useShowController({ resource: 'articles', num: num });
+    const id = getParameterFromUrl(window.location.hash, 'articles');
+    const controllerProps = useShowController({ resource: 'articles', id: id });
 
     return (
         <ShowContextProvider value={controllerProps}>
