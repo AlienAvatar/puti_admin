@@ -58,13 +58,15 @@ const dataProvider = {
         }else if(resource === 'users'){
             let username = "";
             let nickname = "";
-
+            let is_delete = "";
             if(params.filter.username){
                 username = params.filter.username;
             }else if(params.filter.nickname){
                 nickname = params.filter.nickname;
+            }else if(params.filter.is_delete){
+                is_delete = params.filter.is_delete;
             }
-            const list_url = `${config.PATH_USER_LIST}?username=${username}&nickname=${nickname}`;
+            const list_url = `${config.PATH_USER_LIST}?username=${username}&nickname=${nickname}&is_delete=${is_delete}`;
             const token = localStorage.getItem('token');
             const result = await axios.get(list_url, {
                 headers: {
@@ -343,7 +345,34 @@ const dataProvider = {
             }
         }
     },
+    deleteMany: async (resource, params) => {
+        const token = localStorage.getItem('token');
+        if(resource === 'comments'){
 
+        }else if(resource === 'users'){
+            let ids = params.ids;
+            const queryParams = ids.map((id, index) => `id${index}=${id}`);
+            const queryString = queryParams.join('&');
+            let delete_many_url = `${config.PATH_USER_DELETE_MANY}?${queryString}`;
+            axios.defaults.headers['token'] = token;
+
+            console.log('delete_many_url',delete_many_url);
+            const result = await axios.post(delete_many_url, {
+            });
+            if(result.data.status == "success"){
+                window.location.hash = "/users";
+                return {
+                    data: {
+                        message: result.data.message,
+                    } 
+                };
+                
+            }else{
+                return new Promise((resolve, reject) => setTimeout(reject, 1000));
+            }
+            
+        }
+    },
 };
 
 // const articleProvider = withLifecycleCallbacks(fakeRestProvider(data, true), [

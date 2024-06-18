@@ -26,3 +26,4 @@ export const PATH_USER_GET_USERNAME = SERVER_ADDR + USER + 'get_username/';
 export const PATH_USER_GET_ID = SERVER_ADDR + USER + 'get_id/';
 export const PATH_USER_UPDATE = SERVER_ADDR + USER + 'update/';
 export const PATH_USER_DELETE = SERVER_ADDR + USER + 'delete/';
+export const PATH_USER_DELETE_MANY = SERVER_ADDR + USER + 'delete_many/';

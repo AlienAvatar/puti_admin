@@ -16,6 +16,7 @@ import {
     useSaveContext,
     DateInput,
     ImageInput,
+    PasswordInput,
 } from 'react-admin';
 import PersonIcon from '@mui/icons-material/Person';
 import { Avatar } from '@mui/material';
@@ -83,7 +84,7 @@ const UserEditForm = () => {
                     label="用户名"
                     validate={required()}
                 />
-                {/* <TextInput
+                {/* <PasswordInput
                     source="password"
                     label="密码"
                     validate={required()}

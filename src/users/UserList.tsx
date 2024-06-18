@@ -19,6 +19,11 @@ import {
     ExportButton,
     Toolbar,
     downloadCSV,
+    BulkDeleteButton,
+    BooleanInput,
+    CheckboxGroupInput,
+    ReferenceArrayInput,
+    UpdateButton,
 } from 'react-admin';
 import PersonIcon from '@mui/icons-material/Person';
 import Aside from './Aside';
@@ -28,12 +33,17 @@ import {ListActionToolbar} from "../components/iListActionToolbar"
 import {FilterButton} from "../components/iFilterButton"
 import lodashGet from 'lodash/get';
 import jsonExport from 'jsonexport/dist';
+import { Box,} from '@mui/material';
+import {useState} from 'react';
 
 const getUserFilters = permissions =>
     [
         <SearchInput source="username" alwaysOn resettable placeholder="搜索用户名"/>,
-        <TextInput source="nickname" label="搜索昵称"/>,
+        <TextInput source="nickname" label="添加搜索昵称"/>,
+        <BooleanInput source="is_delete" label="是否删除"/>,
+        // is_delete => <BooleanField source="is_delete" label="是否删除" value={is_delete}/>,
     ].filter(filter => filter !== null);
+
 
 const exporterfn = (data) => {
     console.log(data);
@@ -43,12 +53,12 @@ const exporterfn = (data) => {
 const UserBulkActionButtons = props => {
     const { permissions } = usePermissions();
     return (
-        <Toolbar>
+        <Box sx={{ alignItems: 'center', display: 'flex' }}>
             <FilterButton filters={getUserFilters(permissions)} />
             <CreateButton label="创建"></CreateButton>
-            <ExportButton label="导出" meta={"utf-8"} exporter={exporterfn}></ExportButton>
-            {/* <BulkDeleteWithConfirmButton label="删除" {...props} /> */}
-        </Toolbar>
+            {/* <ExportButton label="导出" meta={"utf-8"} exporter={exporterfn}></ExportButton> */}
+            <BulkDeleteButton label="删除" />
+        </Box>
     )
 };
 
@@ -58,13 +68,15 @@ const rowClick = memoize(permissions => (record) => {
 
 const UserList = (props) => {
     const { permissions } = usePermissions();
+    const [isDelete, setIsDelete] = useState(false);
+
     return (
         <List
             filters={getUserFilters(permissions)}
-            filterDefaultValues={{ role: 'user' }}
+            filterDefaultValues={{is_delete: false}}
             sort={{ field: 'nickname', order: 'ASC' }}
             aside={<Aside />}
-            actions={<UserBulkActionButtons />}
+            actions={<UserBulkActionButtons hasCreate={true}/>}
         >
             {useMediaQuery((theme: Theme) => theme.breakpoints.down('md')) ? (
                 <SimpleList

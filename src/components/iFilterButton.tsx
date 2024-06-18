@@ -167,7 +167,7 @@ export const FilterButton = (props: FilterButtonProps): JSX.Element => {
                         autoFocus={index === 0}
                     />
                 ))}
-                {validSavedQueries.map((savedQuery, index) =>
+                {/* {validSavedQueries.map((savedQuery, index) =>
                     isEqual(savedQuery.value, {
                         filter: filterValues,
                         sort,
@@ -178,13 +178,7 @@ export const FilterButton = (props: FilterButtonProps): JSX.Element => {
                             onClick={showRemoveSavedQueryDialog}
                             key={index}
                         >
-                            {translate(
-                                'ra.saved_queries.remove_label_with_name',
-                                {
-                                    _: '删除过滤条件 "%{name}"',
-                                    name: savedQuery.label,
-                                }
-                            )}
+                            删除过滤条件 "%{savedQuery.label}"
                         </MenuItem>
                     ) : (
                         <MenuItem
@@ -213,9 +207,7 @@ export const FilterButton = (props: FilterButtonProps): JSX.Element => {
                 )}
                 {hasFilterValues && !hasSavedCurrentQuery && !disableSaveQuery && (
                     <MenuItem onClick={showAddSavedQueryDialog}>
-                        {translate('ra.saved_queries.new_label', {
-                            _: '保存当前的过滤条件',
-                        })}
+                        保存当前的过滤条件
                     </MenuItem>
                 )}
                 {hasFilterValues && (
@@ -225,13 +217,11 @@ export const FilterButton = (props: FilterButtonProps): JSX.Element => {
                             setOpen(false);
                         }}
                     >
-                        {translate('ra.action.remove_all_filters', {
-                            _: '删除所有过滤条件',
-                        })}
+                        删除所有过滤条件
                     </MenuItem>
-                )}
+                )} */}
             </Menu>
-            {!disableSaveQuery && (
+            {/* {!disableSaveQuery && (
                 <>
                     <AddSavedQueryDialog
                         open={addSavedQueryDialogOpen}
@@ -242,7 +232,7 @@ export const FilterButton = (props: FilterButtonProps): JSX.Element => {
                         onClose={hideRemoveSavedQueryDialog}
                     />
                 </>
-            )}
+            )} */}
         </Root>
     );
 };
