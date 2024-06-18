@@ -15,21 +15,42 @@ import {
     EditButton,
     ShowButton,
     BooleanField,
+    CreateButton,
+    ExportButton,
+    Toolbar,
+    downloadCSV,
 } from 'react-admin';
 import PersonIcon from '@mui/icons-material/Person';
 import Aside from './Aside';
 import UserEditEmbedded from './UserEditEmbedded';
 export const UserIcon = PeopleIcon;
 import {ListActionToolbar} from "../components/iListActionToolbar"
+import {FilterButton} from "../components/iFilterButton"
+import lodashGet from 'lodash/get';
+import jsonExport from 'jsonexport/dist';
+
 const getUserFilters = permissions =>
     [
-        <SearchInput source="q" alwaysOn />,
-        <TextInput source="nickname" />,
+        <SearchInput source="username" alwaysOn resettable placeholder="搜索用户名"/>,
+        <TextInput source="nickname" label="搜索昵称"/>,
     ].filter(filter => filter !== null);
 
-const UserBulkActionButtons = props => (
-    <BulkDeleteWithConfirmButton {...props} />
-);
+const exporterfn = (data) => {
+    console.log(data);
+    const data2 = data.map(post => (Object.assign(Object.assign({}, post), { backlinks: lodashGet(post, 'backlinks', []).map(backlink => backlink.url) })));
+    return jsonExport(data2, (err, csv) => downloadCSV(csv, 'posts'));
+}
+const UserBulkActionButtons = props => {
+    const { permissions } = usePermissions();
+    return (
+        <Toolbar>
+            <FilterButton filters={getUserFilters(permissions)} />
+            <CreateButton label="创建"></CreateButton>
+            <ExportButton label="导出" meta={"utf-8"} exporter={exporterfn}></ExportButton>
+            {/* <BulkDeleteWithConfirmButton label="删除" {...props} /> */}
+        </Toolbar>
+    )
+};
 
 const rowClick = memoize(permissions => (record) => {
     return Promise.resolve('show');
@@ -43,6 +64,7 @@ const UserList = (props) => {
             filterDefaultValues={{ role: 'user' }}
             sort={{ field: 'nickname', order: 'ASC' }}
             aside={<Aside />}
+            actions={<UserBulkActionButtons />}
         >
             {useMediaQuery((theme: Theme) => theme.breakpoints.down('md')) ? (
                 <SimpleList
@@ -54,7 +76,7 @@ const UserList = (props) => {
             ) : (
                 <Datagrid
                     rowClick={rowClick(permissions)}
-                    expand={<UserEditEmbedded />}
+                    // expand={<UserEditEmbedded />}
                     bulkActionButtons={<UserBulkActionButtons />}
                     optimized
                 >

@@ -40,14 +40,9 @@ const Aside = () => {
               }}
         >*/
         <Root className={classes.root}>
-            <Typography variant="h6">App Users</Typography>
+            <Typography variant="h6">更新公告</Typography>
             <Typography variant="body2">
-                Eiusmod adipisicing tempor duis qui. Ullamco aliqua tempor
-                incididunt aliquip aliquip qui ad minim aliqua. Aute et magna
-                quis pariatur irure sunt. Aliquip velit consequat dolore ullamco
-                laborum voluptate cupidatat. Proident minim reprehenderit id
-                dolore elit sit occaecat ad amet tempor esse occaecat enim.
-                Laborum aliqua excepteur qui ipsum in dolor et cillum est.
+                1.未完成更新密码功能，密码还需询问管理员
             </Typography>
         </Root>
     );

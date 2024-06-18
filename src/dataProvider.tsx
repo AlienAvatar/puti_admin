@@ -56,11 +56,15 @@ const dataProvider = {
             }
                 
         }else if(resource === 'users'){
-            let q = "";
-            if(params.filter.q){
-                q = params.filter.q;
+            let username = "";
+            let nickname = "";
+
+            if(params.filter.username){
+                username = params.filter.username;
+            }else if(params.filter.nickname){
+                nickname = params.filter.nickname;
             }
-            const list_url = `${config.PATH_USER_LIST}${q}`;
+            const list_url = `${config.PATH_USER_LIST}?username=${username}&nickname=${nickname}`;
             const token = localStorage.getItem('token');
             const result = await axios.get(list_url, {
                 headers: {
