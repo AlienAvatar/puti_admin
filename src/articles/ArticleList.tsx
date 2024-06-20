@@ -4,6 +4,7 @@ import BookIcon from '@mui/icons-material/Book';
 import { Box, Chip, useMediaQuery } from '@mui/material';
 import { Theme, styled } from '@mui/material/styles';
 import lodashGet from 'lodash/get';
+import memoize from 'lodash/memoize';
 import jsonExport from 'jsonexport/dist';
 import {
     BooleanField,
@@ -16,7 +17,6 @@ import {
     DateField,
     downloadCSV,
     ExportButton,
-    FilterButton,
     List,
     InfiniteList,
     NumberField,
@@ -34,73 +34,16 @@ import {
     useRecordContext,
     EditButton,
     ShowButton,
+    usePermissions,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import * as config from "../config";
 import { article_data_context } from '../dataProvider';
+import {FilterButton} from "../components/iFilterButton"
+import { UserBulkActionButtonsGroup, getArticleFilters} from "../components/iUseBulkActionButtons"
 
-//import ResetViewsButton from './ResetViewsButton';
 export const PostIcon = BookIcon;
-
-interface Article {
-    id: string;
-    author: string;
-    title: string;
-    content: string;
-    category: string;
-    support_count: number;
-    views_count: number;
-    is_delete: boolean;
-    created_at: string;
-    updated_at: string;
-
-}
-
-/**
- * 快速筛选组件
- *
- * @param label 筛选标签
- * @param source 数据源
- * @param defaultValue 默认值
- * @returns 返回 Chip 组件
- */
-const QuickFilter = ({
-    label,
-}: {
-    label?: string;
-    source?: string;
-    defaultValue?: any;
-}) => {
-    const translate = useTranslate();
-    return <Chip sx={{ marginBottom: 1 }} label={translate(label)} />;
-};
-
-const postFilter = [
-    <SearchInput source="q" alwaysOn />,
-    <TextInput source="title" defaultValue="Please input a title" />,
-    <QuickFilter
-        label="resources.posts.fields.commentable"
-        source="commentable"
-        defaultValue
-    />,
-];
-
-/**
- * 导出文章数据
- *
- * @param posts 文章列表
- * @returns 导出后的 CSV 文件
- */
-const exporter = posts => {
-    const data = posts.map(post => ({
-        ...post,
-        backlinks: lodashGet(post, 'backlinks', []).map(
-            backlink => backlink.url
-        ),
-    }));
-    return jsonExport(data, (err, csv) => downloadCSV(csv, 'posts'));
-};
 
 const ArticleListMobileActions = () => (
     <TopToolbar>
@@ -108,16 +51,14 @@ const ArticleListMobileActions = () => (
         <FilterButton /> 
         {/* 创建文章按钮 */}
         <CreateButton />
-        {/* 导出按钮 */}
-        <ExportButton />
     </TopToolbar>
 );
 
 const ArticleListMobile = (props) => (
     <InfiniteList
-        filters={postFilter}
+        filters={getArticleFilters()}
         sort={{ field: 'published_at', order: 'DESC' }}
-        exporter={exporter}
+        // exporter={exporter}
         actions={<ArticleListMobileActions />}
     >
         <SimpleList
@@ -175,10 +116,11 @@ const ArticleListBulkActions = memo(
  */
 const ArticleListActions = () => (
     <TopToolbar>
-        <SelectColumnsButton />
-        <FilterButton />
-        <CreateButton />
-        <ExportButton />
+        {/* <SelectColumnsButton /> */}
+        <FilterButton filters={getArticleFilters()}/>
+        <CreateButton label="创建"/>
+        <BulkDeleteButton label="删除" />
+        {/* <ExportButton /> */}
     </TopToolbar>
 );
 
@@ -194,47 +136,31 @@ const PostPanel = ({ record }) => (
 
 const tagSort = { field: 'name.en', order: 'ASC' };
 
+const rowClick = memoize(permissions => (record) => {
+    return Promise.resolve('show');
+});
+
 const ArticleListDesktop = (props) => {
-    const article_data = useContext(article_data_context);
-
-    if (Object.keys(props).length === 0) {
-        return null;
-    } 
-
-    let data_list = [];
-    const article_list: Article[]  = Object.values(props);
-    article_list.forEach(item => {
-        let obj = {};
-        obj["id"] = item.id;
-        obj["title"] = item.title;
-        obj["content"] = item.content;
-        obj["category"] = item.category;
-        obj["support_count"] = item.support_count;
-        obj["views_count"] = item.views_count;
-        obj["created_at"] = item.created_at;
-        obj["updated_at"] = item.updated_at;
-        obj["is_delete"] = item.is_delete;
-        data_list.push(obj);
-    });
-
-
+    const { permissions } = usePermissions();
     return (
         <List
-            filters={postFilter}
+            filters={getArticleFilters()}
+            filterDefaultValues={{is_delete: false}}
             sort={{ field: 'created_at', order: 'DESC' }}
-            exporter={exporter}
+            // exporter={exporter}
             actions={<ArticleListActions />}
         >
             <StyledDatagrid
-                bulkActionButtons={<ArticleListBulkActions />}
-                //rowClick={rowClick}
-                expand={PostPanel}
+                bulkActionButtons={<ArticleListActions />}
+                rowClick={rowClick(permissions)}
+                //expand={PostPanel}
                 omit={['average_note']}
-                data={data_list}
+                // data={data_list}
             >
                 {/* <TextField source="id" /> */}
                 <TextField source="id" label="文件编号" />
                 <TextField source="title" cellClassName="title" label="标题"/>
+                <TextField source="author" cellClassName="author" label="作者"/>
                 
                 <TextField source="content" cellClassName="content" label="正文"/>
 
@@ -279,35 +205,9 @@ const ArticleList = () => {
     );
 
     useAuthenticated();
-    const [articles, setArticles] = useState([]);
-    const token = localStorage.getItem('token');
-    const [isLoading, setIsLoading] = useState(true);
-    /**
-     * 异步获取数据
-     *
-     * @returns 返回Promise对象，表示异步操作的结果
-     */
-    useEffect(() => {
-        const fetchData = async () => {
-            const result = await axios.get(config.PATH_ARTICLE_LIST, {
-                headers: {
-                    'token': token,
-                },
-            });
-            
-            if(result.data.status == "success"){
-                setArticles(result.data.articles);
-                setIsLoading(false);
-            }else{
-                window.location.href = "/login";
-                return new Promise((resolve, reject) => setTimeout(reject, 1000));
-            }
-        };
-    
-        fetchData();
-    }, [token]);
 
-    return isSmall ? <ArticleListMobile  {...articles}/> : <ArticleListDesktop {...articles}/>;
+    // return isSmall ? <ArticleListMobile  {...articles}/> : <ArticleListDesktop {...articles}/>;
+    return <ArticleListDesktop />;
 };
 
 

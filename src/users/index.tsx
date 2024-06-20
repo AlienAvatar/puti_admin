@@ -10,5 +10,5 @@ export default {
     edit: UserEdit,
     show: UserShow,
     icon: PeopleIcon,
-    recordRepresentation: record => `${record.name} (${record.role})`,
+    recordRepresentation: record => `111${record.name} (${record.role})`,
 };

@@ -35,7 +35,7 @@ import lodashGet from 'lodash/get';
 import jsonExport from 'jsonexport/dist';
 import { Box,} from '@mui/material';
 import {useState} from 'react';
-
+import {UserBulkActionButtonsGroup} from "../components/iUseBulkActionButtons"
 const getUserFilters = permissions =>
     [
         <SearchInput source="username" alwaysOn resettable placeholder="搜索用户名"/>,
@@ -68,7 +68,6 @@ const rowClick = memoize(permissions => (record) => {
 
 const UserList = (props) => {
     const { permissions } = usePermissions();
-    const [isDelete, setIsDelete] = useState(false);
 
     return (
         <List
@@ -89,7 +88,7 @@ const UserList = (props) => {
                 <Datagrid
                     rowClick={rowClick(permissions)}
                     // expand={<UserEditEmbedded />}
-                    bulkActionButtons={<UserBulkActionButtons />}
+                    bulkActionButtons={<UserBulkActionButtons hasCreate={true}/>}
                     optimized
                 >
                     <Avatar>

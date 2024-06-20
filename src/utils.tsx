@@ -6,3 +6,19 @@ export function getParameterFromUrl(url, parameterName) {
     }
     return null;
 }
+
+/**
+ * 导出文章数据
+ *
+ * @param posts 文章列表
+ * @returns 导出后的 CSV 文件
+//  */
+// const exporter = posts => {
+//   const data = posts.map(post => ({
+//       ...post,
+//       backlinks: lodashGet(post, 'backlinks', []).map(
+//           backlink => backlink.url
+//       ),
+//   }));
+//   return jsonExport(data, (err, csv) => downloadCSV(csv, 'posts'));
+// };

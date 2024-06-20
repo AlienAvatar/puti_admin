@@ -14,6 +14,11 @@ import {
     useUnique,
     FileInput,
     SimpleForm,
+    ImageInput,
+    ImageField,
+    useRecordContext,
+    PasswordInput,
+    useSaveContext,
 } from 'react-admin';
 
 import Aside from './Aside';
@@ -25,24 +30,6 @@ const UserEditToolbar = ({ permissions, ...props }) => {
     return (
         <Toolbar {...props}>
             <SaveButton label="保存" />
-            {permissions === 'admin' && (
-                <SaveButton
-                    label="user.action.save_and_add"
-                    mutationOptions={{
-                        onSuccess: () => {
-                            notify('ra.notification.created', {
-                                type: 'info',
-                                messageArgs: {
-                                    smart_count: 1,
-                                },
-                            });
-                            reset();
-                        },
-                    }}
-                    type="button"
-                    variant="text"
-                />
-            )}
         </Toolbar>
     );
 };
@@ -54,10 +41,15 @@ const isValidName = async value =>
         )
     );
 
-const UserCreate = () => {
+const UserCreate = (props) => {
     const { permissions } = usePermissions();
-    console.log('permissions', permissions);
     const unique = useUnique();
+
+    const equalToPassword = (value, allValues) => {
+        if (value !== allValues.password) {
+            return '密码不一致';
+        }
+    }
     return (
         <Create aside={<Aside />} redirect="show">
             <SimpleForm
@@ -65,12 +57,14 @@ const UserCreate = () => {
                 warnWhenUnsavedChanges
                 toolbar={<UserEditToolbar permissions={permissions} />}
             >
-                <TextInput source="username" autoFocus validate={[required(), unique()]} />
-                <TextInput source="password" validate={[required()]} />
-                <TextInput source="re_password" validate={[required()]} />
-                <TextInput source="nickname" validate={[required()]} />
-                {/* <FileInput source="avatar" accept="image/*" /> */}
-                <TextInput source="email" validate={[required()]} />
+                <TextInput source="username" resettable autoFocus validate={[required(), unique()]} />
+                {/* <ImageInput source="pictures"  accept="image/*" label="Related pictures">
+                    <ImageField source="src" title="title" />
+                </ImageInput> */}
+                <PasswordInput source="password"  validate={[required()]} />
+                <PasswordInput source="confirm_password"  validate={equalToPassword} />
+                <TextInput source="nickname" resettable validate={[required()]} />
+                <TextInput source="email" resettable validate={[required()]} />
             </SimpleForm>
         </Create>
     );

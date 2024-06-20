@@ -10,9 +10,9 @@ const UserShow = () => {
         <Show title="展示">
             <SimpleShowLayout>
                 <TextField source="id" />
-                <Avatar>
+                {/* <Avatar>
                     <PersonIcon />
-                </Avatar>
+                </Avatar> */}
                 <TextField label="用户名" source="username" />
                 <TextField label="昵称" source="nickname" />
                 <TextField label="邮箱" source="email" />

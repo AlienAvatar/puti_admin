@@ -16,15 +16,31 @@ const dataProvider = {
     getList: async (resource, params) => {
         console.log('getList');
         if(resource === 'articles'){
+            let list_url = `${config.PATH_ARTICLE_LIST}`;
+            let param_arr = [];
+            if (params.filter.title) {
+                param_arr.push(`title=${params.filter.title}`);
+            }
+
+            if (params.filter.author) {
+                param_arr.push(`author=${params.filter.author}`);
+            }
+
+            if (params.filter.is_delete) {
+                param_arr.push(`is_delete=${params.filter.is_delete}`);
+            }
+            if (param_arr.length > 0) {
+                list_url += `?${param_arr.join('&')}`;
+            }
+
             const token = localStorage.getItem('token');
-            const result = await axios.get(config.PATH_ARTICLE_LIST, {
+            const result = await axios.get(list_url, {
                 headers: {
                     'token': token,
                 },
             });
             
             if(result != null && result.data.status == "success"){
-                article_data_context = result.data.articles;
                 return { 
                     data: result.data.articles,
                     pageInfo: { page: 1, perPage: 10 },
@@ -35,7 +51,6 @@ const dataProvider = {
             }
         }else if(resource === 'comments'){
             {
-                resource:'comments'
                 let get_url = `${config.PATH_COMMENT_LIST}`;
                 const token = localStorage.getItem('token');
                 const result = await axios.get(get_url, {
@@ -56,17 +71,25 @@ const dataProvider = {
             }
                 
         }else if(resource === 'users'){
-            let username = "";
-            let nickname = "";
-            let is_delete = "";
-            if(params.filter.username){
-                username = params.filter.username;
-            }else if(params.filter.nickname){
-                nickname = params.filter.nickname;
-            }else if(params.filter.is_delete){
-                is_delete = params.filter.is_delete;
+            let list_url = `${config.PATH_USER_LIST}`;
+            let param_arr = [];
+
+            if (params.filter.username) {
+                param_arr.push(`username=${params.filter.username}`);
             }
-            const list_url = `${config.PATH_USER_LIST}?username=${username}&nickname=${nickname}&is_delete=${is_delete}`;
+
+            if (params.filter.nickname) {
+                param_arr.push(`nickname=${params.filter.nickname}`);
+            }
+
+            if (params.filter.is_delete) {
+                param_arr.push(`is_delete=${params.filter.is_delete}`);
+            }
+
+            if (param_arr.length > 0) {
+                list_url += `?${param_arr.join('&')}`;
+            }
+            
             const token = localStorage.getItem('token');
             const result = await axios.get(list_url, {
                 headers: {
@@ -252,6 +275,25 @@ const dataProvider = {
                 window.location.hash = "/login";
                 return new Promise((resolve, reject) => setTimeout(reject, 1000));
             }
+        }else if(resource === 'articles'){
+            const token = localStorage.getItem('token');
+            axios.defaults.headers['token'] = token;
+            const result = await axios.post(config.PATH_ARTICLE_CREATE, {
+                'title': params.data.title,
+                'author': params.data.author,
+                'content': params.data.content,
+                'category': params.data.category
+            });
+
+            if(result != null && result.data.status == "success"){
+                window.location.hash = "/articles";
+                return { 
+                    data: result.data.data.article,
+                    pageInfo: { page: 1, perPage: 10 },
+                };
+            }else{
+                return new Promise((resolve, reject) => setTimeout(reject, 1000));
+            }
         }
     },
 
@@ -266,7 +308,7 @@ const dataProvider = {
                 'article_id': params.data.article_id,
                 'author': params.data.author,
                 'content': params.data.content,
-                'good_count': params.data.good_count
+                'support_count': params.data.support_count
             });
             if(result.data.status == "success"){
                 window.location.hash = "/comments";
@@ -285,7 +327,6 @@ const dataProvider = {
             let update_url = `${config.PATH_USER_UPDATE}${username}`;
             axios.defaults.headers['token'] = token;
             const result = await axios.post(update_url, {
-                'username': params.data.username,
                 'nickname': params.data.nickname,
                 'email': params.data.email,
             });
@@ -301,17 +342,42 @@ const dataProvider = {
             }else{
                 return new Promise((resolve, reject) => setTimeout(reject, 1000));
             }
+        }else if(resource === 'articles'){
+            const token = localStorage.getItem('token');
+            let id = params.id;
+            let update_url = `${config.PATH_ARTICLE_UPDATE}${id}`;
+            axios.defaults.headers['token'] = token;
+            const result = await axios.post(update_url, {
+                'title': params.data.title,
+                'author': params.data.author,
+                'content': params.data.content,
+                'category': params.data.category,
+                'support_count' : params.data.support_count,
+                'views_count': params.data.views_count,
+            });
+
+            if(result != null && result.data.status == "success"){
+                window.location.hash = "/articles";
+                return { 
+                    data: {
+                        id: result.data.data.article.id,
+                    } 
+                };
+            }else{
+                return new Promise((resolve, reject) => setTimeout(reject, 1000));
+            }
         }
     },
 
     delete: async (resource, params) => {
+        console.log('delete');
         if(resource === 'comments'){
             const token = localStorage.getItem('token');
 
             let id = params.id;
-            let update_url = `${config.PATH_COMMENT_DELETE}${id}`;
+            let delete_url = `${config.PATH_COMMENT_DELETE}${id}`;
             axios.defaults.headers['token'] = token;
-            const result = await axios.post(update_url, {
+            const result = await axios.post(delete_url, {
             });
             if(result.data.status == "success"){
                 window.location.hash = "/comments";
@@ -328,9 +394,9 @@ const dataProvider = {
             const token = localStorage.getItem('token');
 
             let id = params.id;
-            let update_url = `${config.PATH_USER_DELETE}${id}`;
+            let delete_url = `${config.PATH_USER_DELETE}${id}`;
             axios.defaults.headers['token'] = token;
-            const result = await axios.post(update_url, {
+            const result = await axios.post(delete_url, {
             });
             if(result.data.status == "success"){
                 window.location.hash = "/comments";
@@ -339,13 +405,27 @@ const dataProvider = {
                         message: result.data.message,
                     } 
                 };
-                
             }else{
                 return new Promise((resolve, reject) => setTimeout(reject, 1000));
+            }
+        }else if(resource === 'articles'){
+            const token = localStorage.getItem('token');
+            let id = params.id;
+            let delete_url = `${config.PATH_ARTICLE_DELETE}${id}`;
+            axios.defaults.headers['token'] = token;
+            const result = await axios.post(delete_url, {});
+            if(result != null && result.data.status == "success"){
+                window.location.hash = "/articles";
+                return { 
+                    data: {
+                        message: result.data.message,
+                    } 
+                }
             }
         }
     },
     deleteMany: async (resource, params) => {
+        console.log('deleteMany');
         const token = localStorage.getItem('token');
         if(resource === 'comments'){
 
@@ -356,21 +436,37 @@ const dataProvider = {
             let delete_many_url = `${config.PATH_USER_DELETE_MANY}?${queryString}`;
             axios.defaults.headers['token'] = token;
 
-            console.log('delete_many_url',delete_many_url);
             const result = await axios.post(delete_many_url, {
             });
             if(result.data.status == "success"){
                 window.location.hash = "/users";
                 return {
-                    data: {
-                        message: result.data.message,
-                    } 
+                    //data的需要个数组
+                    data: []
                 };
                 
             }else{
                 return new Promise((resolve, reject) => setTimeout(reject, 1000));
             }
-            
+        }else if(resource === 'articles'){
+            let ids = params.ids;
+            const queryParams = ids.map((id, index) => `id${index}=${id}`);
+            const queryString = queryParams.join('&');
+            let delete_many_url = `${config.PATH_ARTICLE_DELETE_MANY}?${queryString}`;
+            axios.defaults.headers['token'] = token;
+            console.log('delete_many_url',delete_many_url);
+
+            const result = await axios.post(delete_many_url, {
+            });
+            if(result.data.status == "success"){
+                window.location.hash = "/articles";
+                return {
+                    data: []
+                };
+                
+            }else{
+                return new Promise((resolve, reject) => setTimeout(reject, 1000));
+            }
         }
     },
 };

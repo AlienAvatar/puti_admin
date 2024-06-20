@@ -17,6 +17,8 @@ import {
     DateInput,
     ImageInput,
     PasswordInput,
+    FileInput,
+    ImageField,
 } from 'react-admin';
 import PersonIcon from '@mui/icons-material/Person';
 import { Avatar } from '@mui/material';
@@ -39,12 +41,15 @@ const UserEditToolbar = props => {
     );
 };
 
-const EditActions = () => (
-    <TopToolbar>
-        <CloneButton className="button-clone" />
-        <ShowButton />
-    </TopToolbar>
-);
+const EditActions = (props) =>{
+    console.log('EditActions', props);
+    return (
+        <TopToolbar>
+            <CloneButton label="复制" className="button-clone" />
+            <ShowButton label="展示"/>
+        </TopToolbar>
+    )
+} 
 
 const UserEditForm = () => {
     const { permissions } = usePermissions();
@@ -69,11 +74,14 @@ const UserEditForm = () => {
             toolbar={<UserEditToolbar />}
             onSubmit={newSave}
         >
-            <TabbedForm.Tab label="编辑" path="">
+            <TabbedForm.Tab label="更改" path="">
                 <TextInput source="id" InputProps={{ disabled: true }} />
-                <Avatar>
-                    <PersonIcon />
-                </Avatar>
+                {/* <ImageInput source="pictures"  accept="image/*" label="Related pictures">
+                    <ImageField source="src" title="title" />
+                </ImageInput> */}
+                {/* <Avatar>
+                    <ImageField source="src" title="title" />
+                </Avatar> */}
                 <TextInput
                     source="nickname"
                     label="昵称"
@@ -83,7 +91,9 @@ const UserEditForm = () => {
                     source="username"
                     label="用户名"
                     validate={required()}
+                    InputProps={{ disabled: true }} 
                 />
+            
                 {/* <PasswordInput
                     source="password"
                     label="密码"
@@ -97,7 +107,7 @@ const UserEditForm = () => {
                 <DateInput source="created_at" label="创建日期" InputProps={{ disabled: true }} />
                 <DateInput source="updated_at" label="更改日期" InputProps={{ disabled: true }} />
             </TabbedForm.Tab>
-        </TabbedForm>
+        </TabbedForm>   
     );
 };
 const UserEdit = () => {

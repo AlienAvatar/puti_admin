@@ -124,7 +124,7 @@ const CustomRouteLayout = ({ title = 'Article' }) => {
                 <TextField source="title" sortable={false} />
                 <TextField source="author" sortable={false} />
                 <TextField source="content" sortable={false} />
-                <TextField source="good_count" sortable={false} />
+                <TextField source="support_count" sortable={false} />
                 <TextField source="created_at" sortable={false} />
                 <TextField source="updated_at" sortable={false} />
             </Datagrid>

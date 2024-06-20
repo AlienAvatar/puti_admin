@@ -34,92 +34,111 @@ import axios from 'axios';
 import * as config from "../config";
 import { Editor } from '@tiptap/react';
 
-// const ArticleCreateToolbar = (props) => {
-//     const notify = useNotify();
-//     const redirect = useRedirect();
-//     const { reset } = useFormContext();
+const ArticleCreateToolbar = (props) => {
+    const notify = useNotify();
+    const redirect = useRedirect();
+    const { reset } = useFormContext();
     
-//     let editorRef = props.editorRef;
-//     const handleSubmit = async event => {
-//         event.preventDefault();
+    // let editorRef = props.editorRef;
+    // const handleSubmit = async event => {
+    //     event.preventDefault();
 
-//         const token = localStorage.getItem('token');
-//         const nickname = localStorage.getItem('nickname');
+    //     const token = localStorage.getItem('token');
+    //     const nickname = localStorage.getItem('nickname');
         
-//         const title = document.getElementById('title').value;
-//         const content = editorRef.current?.getHTML();
-//         console.log(event);
+    //     const title = document.getElementById('title').value;
+    //     const content = editorRef.current?.getHTML();
+    //     console.log(event);
         
-//         const result = await axios.post(config.PATH_ARTICLE_CREATE, {
-//             headers: {
-//                 'token': token,
-//             },
-//             data: {
-//                 nickname: nickname,
-//                 title: title,
-//                 content: content,
-//             }
-//         });
-//         if(result.data.status == "success"){
+    //     const result = await axios.post(config.PATH_ARTICLE_CREATE, {
+    //         headers: {
+    //             'token': token,
+    //         },
+    //         data: {
+    //             nickname: nickname,
+    //             title: title,
+    //             content: content,
+    //         }
+    //     });
+    //     if(result.data.status == "success"){
             
-//         }else{
-//             return new Promise((resolve, reject) => setTimeout(reject, 1000));
-//         }
-    
-//     };
+    //     }else{
+    //         return new Promise((resolve, reject) => setTimeout(reject, 1000));
+    //     }
+    // };
 
-//     return (
-//         <Toolbar>
-//             <SaveButton
-//                 label="post.action.save_and_add"
-//                 type="button"
-//                 variant="text"
-//                 onClick={handleSubmit}
-//                 mutationOptions={{
-//                     onSuccess: () => {
-//                         reset();
-//                         window.scrollTo(0, 0);
-//                         notify('ra.notification.created', {
-//                             type: 'info',
-//                             messageArgs: { smart_count: 1 },
-//                         });
-//                     },
-//                 }}
-//             />
-//         </Toolbar>
-//     );
-// };
+    return (
+        <Toolbar>
+            {/* <SaveButton label="post.action.save_and_edit" variant="text" />
+            <SaveButton
+                label="post.action.save_and_show"
+                type="button"
+                variant="text"
+                mutationOptions={{
+                    onSuccess: data => {
+                        notify('ra.notification.created', {
+                            type: 'info',
+                            messageArgs: { smart_count: 1 },
+                        });
+                        redirect('show', 'posts', data.id);
+                    },
+                }}
+                sx={{ display: { xs: 'none', sm: 'flex' } }}
+            /> */}
+            <SaveButton
+                label="保存"
+                type="button"
+                variant="text"
+                mutationOptions={{
+                    onSuccess: () => {
+                        reset();
+                        window.scrollTo(0, 0);
+                        notify('ra.notification.created', {
+                            type: 'info',
+                            messageArgs: { smart_count: 1 },
+                        });
+                    },
+                }}
+            />
+            {/* <SaveButton
+                label="post.action.save_with_average_note"
+                type="button"
+                variant="text"
+                mutationOptions={{
+                    onSuccess: data => {
+                        notify('ra.notification.created', {
+                            type: 'info',
+                            messageArgs: { smart_count: 1 },
+                        });
+                        redirect('show', 'posts', data.id);
+                    },
+                }}
+                transform={data => ({ ...data, average_note: 10 })}
+                sx={{ display: { xs: 'none', sm: 'flex' } }}
+            /> */}
+        </Toolbar>
+    );
+};
 
+const backlinksDefaultValue = [
+    {
+        date: new Date(),
+        url: 'http://google.com',
+    },
+];
 const ArticleCreate = () => {
+    const { permissions } = usePermissions();
+    const dateDefaultValue = useMemo(() => new Date(), []);
+
     const nickname = localStorage.getItem('nickname');
     const token = localStorage.getItem('token');
     const editorRef = React.useRef<Editor | null>(null);
-    
-    const handleSubmit =  async () => {
-        const titleElement = document.getElementById('title') as HTMLInputElement;
-        const title = titleElement ? titleElement.value : '';
-        const content = editorRef.current?.getHTML();
-        const categoryElement = document.querySelector('.MuiSelect-nativeInput') as HTMLSelectElement;
-        const category = categoryElement ? categoryElement.value : '';
-        axios.defaults.headers['token'] = token;
-        const result = await axios.post(config.PATH_ARTICLE_CREATE, {
-            'title': title,
-            'author': nickname,
-            'content': content,
-            'category': category
-        });
-        if(result.data.status == "success"){
-            console.log(result.data);
-        }else{
-            return new Promise((resolve, reject) => setTimeout(reject, 1000));
-        }
-    }
 
     return (
         <Create redirect="edit">
             <SimpleFormConfigurable
-                //toolbar={<ArticleCreateToolbar {...editorRef} />}
-                onSubmit={handleSubmit}
+                // onSubmit={handleSubmit}
+                toolbar={<ArticleCreateToolbar />}
             >
                 <TextInput
                     className='article_title'
@@ -165,9 +184,6 @@ const ArticleCreate = () => {
                         { id: 'people', name: 'People' },
                     ]} 
                 />
-                <DialogActions>
-                    <Button type="submit">Save</Button>
-                </DialogActions>
             </SimpleFormConfigurable>
         </Create>
     );

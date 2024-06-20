@@ -28,14 +28,22 @@ import {
     useListContext,
     useTranslate,
     ShowButton,
-    NumberField
+    NumberField,
+    DeleteButton,
+    TopToolbar,
+    CreateButton,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
+import { UserBulkActionButtonsGroup, getCommentFilters } from "../components/iUseBulkActionButtons"
+import {FilterButton} from "../components/iFilterButton"
 
-const commentFilters = [
-    <SearchInput source="q" alwaysOn />,
-    <ReferenceInput source="post_id" reference="posts" />,
-];
-
+const CommentListMobileActions = () => (
+    <TopToolbar>
+        {/* 添加筛选条件按钮 */}
+        <FilterButton /> 
+        {/* 创建评论按钮 */}
+        <CreateButton label="创建"/>
+    </TopToolbar>
+);
 // const GoodComponent = () => {
 //     return (
         
@@ -67,6 +75,63 @@ const exporter = (records, fetchRelatedRecords) =>
         });
     });
 
+const GridItem = ({ record }) => {
+    return (
+        <Grid item key={record.id} sm={12} md={6} lg={4}>
+                            <Card
+                                sx={{
+                                    height: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                }}
+                            >
+                                <CardHeader
+                                    className="comment"
+                                    title={
+                                        <TextField
+                                            record={record}
+                                            source="author"
+                                        />
+                                    }
+                                    subheader={
+                                        <DateField
+                                            record={record}
+                                            source="created_at"
+                                        />
+                                    }
+                                    avatar={
+                                        <Avatar>
+                                            <PersonIcon />
+                                        </Avatar>
+                                    }
+                                />
+                                <CardContent>
+                                    <TextField
+                                        record={record}
+                                        source="content"
+                                        sx={{
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical',
+                                        }}
+                                    />
+                                </CardContent>
+                                <CardActions sx={{ justifyContent: 'flex-end' }}>
+                                    <ThumbUpIcon />
+                                    <TextField
+                                        record={record}
+                                        source="support_count"
+                                    />
+                                    <EditButton record={record} label="编辑" />
+                                    <ShowButton record={record} label="展示" />
+                                    <DeleteButton record={record} label="删除" />
+                                </CardActions>
+                            </Card>
+                        </Grid>
+    )
+}
 const CommentGrid = () => {
     const { data } = useListContext();
     const translate = useTranslate();
@@ -74,60 +139,17 @@ const CommentGrid = () => {
 
     return (
         <Grid spacing={2} container>
-            {data.map(record => (
-                <Grid item key={record.id} sm={12} md={6} lg={4}>
-                    <Card
-                        sx={{
-                            height: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}
-                    >
-                        <CardHeader
-                            className="comment"
-                            title={
-                                <TextField
-                                    record={record}
-                                    source="author"
-                                />
-                            }
-                            subheader={
-                                <DateField
-                                    record={record}
-                                    source="created_at"
-                                />
-                            }
-                            avatar={
-                                <Avatar>
-                                    <PersonIcon />
-                                </Avatar>
-                            }
-                        />
-                        <CardContent>
-                            <TextField
-                                record={record}
-                                source="content"
-                                sx={{
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    display: '-webkit-box',
-                                    WebkitLineClamp: 2,
-                                    WebkitBoxOrient: 'vertical',
-                                }}
-                            />
-                        </CardContent>
-                        <CardActions sx={{ justifyContent: 'flex-end' }}>
-                            <ThumbUpIcon />
-                            <TextField
-                                record={record}
-                                source="good_count"
-                            />
-                            <EditButton record={record} label="编辑" />
-                            <ShowButton record={record} label="展示" />
-                        </CardActions>
-                    </Card>
-                </Grid>
-            ))}
+            {
+                data.map(record => {
+
+                    const grid_comp = !record.is_delete ? <GridItem record={record}/> : null;
+                    return (
+                        <>
+                            {grid_comp}
+                        </>
+                    )
+                })
+            }
         </Grid>
     );
 };
@@ -155,7 +177,8 @@ const ListView = () => {
     return (
         <>
             <Title defaultTitle={defaultTitle} />
-            <ListToolbar filters={commentFilters} actions={<ListActions />} />
+            <ListToolbar filters={getCommentFilters()} 
+                actions={<CommentListMobileActions /> } />
             {isSmall ? <CommentMobileList /> : <CommentGrid />}
             <Pagination rowsPerPageOptions={[6, 9, 12]} />
         </>

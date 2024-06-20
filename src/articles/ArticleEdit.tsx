@@ -44,6 +44,7 @@ import {
     NumberField,
     BooleanField,
     DeleteButton,
+    useRecordContext,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import {
     Box,
@@ -63,14 +64,24 @@ import { Editor } from '@tiptap/react';
 import { useFormContext } from 'react-hook-form';
 const EditActions = ({ hasShow }: EditActionsProps) => (
     <TopToolbar>
-        <CloneButton className="button-clone" />
-        {hasShow && <ShowButton />}
+        <CreateButton label="创建"/>       
+        <CloneButton label="复制" className="button-clone" />
+        <ShowButton label="展示"/>
         {/* FIXME: added because react-router HashHistory cannot block navigation induced by address bar changes */}
-        <CreateButton />
-
     </TopToolbar>
 );
 
+const CreateRelatedComment = () => {
+    const record = useRecordContext();
+    
+    return (
+        <CloneButton
+            resource="comments"
+            label="添加评论"
+            record={{ article_id: record.id }}
+        />
+    );
+};
 const FormActions = (props) =>{
     return (
         <TopToolbar
@@ -90,7 +101,7 @@ const FormActions = (props) =>{
                         float: 'left',
                     }
                 }}
-                label="Save"
+                label="保存"
                 type="submit"
                 variant="contained"
             />
@@ -159,25 +170,6 @@ const ArticleEdit = () => {
     
         fetchData();
     }, [token, get_url]);
-
-    const updateData = async (data) => {
-        axios.defaults.headers['token'] = token;
-        const result = await axios.post(update_url, {
-            'title': data.title,
-            'author': nickname,
-            'content': data.content,
-            'category': data.category,
-            'support_count': data.support_count,
-            'views_count': data.views_count,
-        });
-        
-        console.log('result', result);
-        if(result.data.status == "success"){
-            return new Promise((resolve, reject) => setTimeout(resolve, 1000));
-        }else{
-            return new Promise((resolve, reject) => setTimeout(reject, 1000));
-        }
-    };
 
     return (
             // <TabbedForm
@@ -270,7 +262,7 @@ const ArticleEdit = () => {
             //         </ReferenceManyField>
             //     </TabbedForm.Tab>
             // </TabbedForm>
-        <Edit title={<ArticleTitle />} actions={<EditActions />}>
+        <Edit actions={<EditActions />}>
             <TabbedForm
                 defaultValues={{ average_note: 0 }}
                 warnWhenUnsavedChanges
@@ -355,11 +347,12 @@ const ArticleEdit = () => {
                             <DateField source="created_at" label="创建日期"/>
                             <TextField source="author" label="作者" />
                             <TextField source="content" label="内容"/>
-                            <NumberField source="good_count" label="点赞数"/>
+                            <NumberField source="support_count" label="点赞数"/>
                             <BooleanField source="is_delete" label="是否删除"/>
                             <EditButton />
                         </Datagrid>
                     </ReferenceManyField>
+                    <CreateRelatedComment />
                 </TabbedForm.Tab>
             </TabbedForm>
         </Edit>

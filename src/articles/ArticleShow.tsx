@@ -24,6 +24,10 @@ import {
     SimpleShowLayout,
     ReferenceManyField,
     useShowController,
+    ShowActionsProps,
+    TopToolbar,
+    CreateButton,
+    DeleteButton,
 } from 'react-admin';
 import ArticleTitle from './ArticleTitle';
 import { useState, useEffect } from 'react';
@@ -37,12 +41,19 @@ const CreateRelatedComment = () => {
     return (
         <CloneButton
             resource="comments"
-            label="Add comment"
-            record={{ post_num: record.num }}
+            label="添加评论"
+            record={{ article_id: record.id }}
         />
     );
 };
 
+const ShowActions = () => (
+    <TopToolbar>
+        <CloneButton label="复制" className="button-clone" />
+        <EditButton label="编辑"/>
+        <DeleteButton label="删除"/>
+    </TopToolbar>
+);
 /**
  * 展示文章详情
  *
@@ -53,8 +64,8 @@ const ArticleShow = () => {
     const controllerProps = useShowController({ resource: 'articles', id: id });
 
     return (
-        <ShowContextProvider value={controllerProps}>
-            <ShowView title={<ArticleTitle />}>
+        <ShowContextProvider value={controllerProps} >
+            <ShowView title={<ArticleTitle />} actions={ShowActions()}>
                 <TabbedShowLayout>
                     <TabbedShowLayout.Tab label="主体">
                         <TextField source="id" label="文件编号"/>
@@ -65,24 +76,24 @@ const ArticleShow = () => {
                                     stripTags={false}
                                     label="内容"
                                 />
-                    <SelectField 
-                        className="article_category"
-                        source="category"
-                        label="类型" 
-                        choices={[
-                            { id: 'tech', name: 'Tech' },
-                            { id: 'lifestyle', name: 'Lifestyle' },
-                            { id: 'people', name: 'People' },
-                        ]}
-                    />
-                        <CloneButton />
+                        <SelectField 
+                            className="article_category"
+                            source="category"
+                            label="类型" 
+                            choices={[
+                                { id: 'tech', name: 'Tech' },
+                                { id: 'lifestyle', name: 'Lifestyle' },
+                                { id: 'people', name: 'People' },
+                            ]}
+                        />
+                       <CloneButton label="复制" />
                     </TabbedShowLayout.Tab>
                     <TabbedShowLayout.Tab label="其它">
                         <NumberField source="support_count" label="点赞数"/>
                         <NumberField source="views_count" label="浏览量"/>
                         <DateField source="created_at" label="创建日期"/>
                         <DateField source="updated_at" label="更新日期"/>
-                        <CloneButton />
+                        <CloneButton label="复制" />
                     </TabbedShowLayout.Tab>
                     <TabbedShowLayout.Tab label="评论"
                         count={
@@ -103,9 +114,9 @@ const ArticleShow = () => {
                                 <DateField source="created_at" label="创建日期"/>
                                 <TextField source="author" label="作者" />
                                 <TextField source="content" label="内容"/>
-                                <NumberField source="good_count" label="点赞数"/>
+                                <NumberField source="support_count" label="点赞数"/>
                                 <BooleanField source="is_delete" label="是否删除"/>
-                                <EditButton />
+                                <EditButton label="编辑"/>
                             </Datagrid>
                         </ReferenceManyField>
                         <CreateRelatedComment />

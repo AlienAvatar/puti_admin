@@ -169,7 +169,7 @@ const CommentEdit = props => {
                                 multiline={true}
                             />
                             <TextInput
-                                source="good_count"
+                                source="support_count"
                             />
                             <DateInput source="created_at" fullWidth disabled/>
                         </SimpleForm>
