@@ -11,6 +11,7 @@ const CommentShow = () => (
     <Show>
         <SimpleShowLayout>
             <TextField source="id" />
+            <TextField label="文章编号" source="article_id" />
             <ReferenceField source="article_id" reference="articles" label="文章标题">
                 <TextField source="title"/>
             </ReferenceField>

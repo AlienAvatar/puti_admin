@@ -24,6 +24,9 @@ import {
     CheckboxGroupInput,
     ReferenceArrayInput,
     UpdateButton,
+    Pagination,
+    usePaginationState,
+    useListContext,
 } from 'react-admin';
 import PersonIcon from '@mui/icons-material/Person';
 import Aside from './Aside';
@@ -36,6 +39,7 @@ import jsonExport from 'jsonexport/dist';
 import { Box,} from '@mui/material';
 import {useState} from 'react';
 import {UserBulkActionButtonsGroup} from "../components/iUseBulkActionButtons"
+//import { EditInDialogButton } from "@react-admin/ra-form-layout";
 const getUserFilters = permissions =>
     [
         <SearchInput source="username" alwaysOn resettable placeholder="搜索用户名"/>,
@@ -66,9 +70,15 @@ const rowClick = memoize(permissions => (record) => {
     return Promise.resolve('show');
 });
 
+const PostPagination = (props) => {
+    return <Pagination rowsPerPageOptions={[2, 4]} />;
+}
+
 const UserList = (props) => {
     const { permissions } = usePermissions();
-
+    const {page} = usePaginationState();
+    const { total } = useListContext();
+    console.log(total)
     return (
         <List
             filters={getUserFilters(permissions)}
@@ -76,6 +86,7 @@ const UserList = (props) => {
             sort={{ field: 'nickname', order: 'ASC' }}
             aside={<Aside />}
             actions={<UserBulkActionButtons hasCreate={true}/>}
+            // pagination={<PostPagination />}
         >
             {useMediaQuery((theme: Theme) => theme.breakpoints.down('md')) ? (
                 <SimpleList

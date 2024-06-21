@@ -20,7 +20,6 @@ import isEqual from 'lodash/isEqual';
 import { useListContext, useResourceContext, useTranslate } from 'ra-core';
 import { stringify } from 'query-string';
 import { useNavigate } from 'react-router';
-
 import { FilterButtonMenuItem } from 'react-admin';
 import { Button } from 'react-admin';
 import { FilterContext } from 'react-admin';

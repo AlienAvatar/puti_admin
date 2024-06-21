@@ -13,8 +13,12 @@ import {getParameterFromUrl} from './utils';
 export let article_data_context = createContext(null);
 export let comment_data_context = createContext(null);
 const dataProvider = {
+
     getList: async (resource, params) => {
         console.log('getList');
+
+        let limit = params.pagination.perPage;
+        let page = params.pagination.page;
         if(resource === 'articles'){
             let list_url = `${config.PATH_ARTICLE_LIST}`;
             let param_arr = [];
@@ -29,10 +33,13 @@ const dataProvider = {
             if (params.filter.is_delete) {
                 param_arr.push(`is_delete=${params.filter.is_delete}`);
             }
+            param_arr.push(`page=${page}`);
+            param_arr.push(`limit=${limit}`);
+
             if (param_arr.length > 0) {
                 list_url += `?${param_arr.join('&')}`;
             }
-
+        
             const token = localStorage.getItem('token');
             const result = await axios.get(list_url, {
                 headers: {
@@ -50,24 +57,41 @@ const dataProvider = {
                 return new Promise((resolve, reject) => setTimeout(reject, 1000));
             }
         }else if(resource === 'comments'){
-            {
-                let get_url = `${config.PATH_COMMENT_LIST}`;
-                const token = localStorage.getItem('token');
-                const result = await axios.get(get_url, {
-                    headers: {
-                        'token': token,
-                    },
-                })
+            let list_url = `${config.PATH_COMMENT_LIST}`;
+            let param_arr = [];
+            if (params.filter.article_id) {
+                param_arr.push(`article_id=${params.filter.article_id}`);
+            }
 
-                if(result != null && result.data.status == "success"){
-                    comment_data_context = result.data.comments;
-                    return { 
-                        data: comment_data_context
-                    };
-                }else{
-                    window.location.hash = "/login";
-                    return new Promise((resolve, reject) => setTimeout(reject, 1000));
-                }
+            if (params.filter.author) {
+                param_arr.push(`author=${params.filter.author}`);
+            }
+
+            if (params.filter.is_delete) {
+                param_arr.push(`is_delete=${params.filter.is_delete}`);
+            }
+            param_arr.push(`page=${page}`);
+            param_arr.push(`limit=${limit}`);
+
+            if (param_arr.length > 0) {
+                list_url += `?${param_arr.join('&')}`;
+            }
+            console.log(list_url);
+            const token = localStorage.getItem('token');
+            const result = await axios.get(list_url, {
+                headers: {
+                    'token': token,
+                },
+            })
+
+            if(result != null && result.data.status == "success"){
+                comment_data_context = result.data.comments;
+                return { 
+                    data: comment_data_context
+                };
+            }else{
+                window.location.hash = "/login";
+                return new Promise((resolve, reject) => setTimeout(reject, 1000));
             }
                 
         }else if(resource === 'users'){
@@ -86,10 +110,19 @@ const dataProvider = {
                 param_arr.push(`is_delete=${params.filter.is_delete}`);
             }
 
+            if (params.pagination.page) {
+                param_arr.push(`page=${params.pagination.page}`);
+            }
+
+            if (params.pagination.perPage) {
+                param_arr.push(`limit=${params.pagination.perPage}`);
+            }
+
             if (param_arr.length > 0) {
                 list_url += `?${param_arr.join('&')}`;
             }
             
+            console.log('list_url', list_url);
             const token = localStorage.getItem('token');
             const result = await axios.get(list_url, {
                 headers: {
@@ -243,8 +276,7 @@ const dataProvider = {
                 'content': params.data.content
             });
             if(result.data.status == "success"){
-                console.log(result.data.data.comment);
-                
+                window.location.hash = "/comments";
                 return {
                     data: {
                         id: result.data.data.comment.id,
@@ -363,6 +395,38 @@ const dataProvider = {
                         id: result.data.data.article.id,
                     } 
                 };
+            }else{
+                return new Promise((resolve, reject) => setTimeout(reject, 1000));
+            }
+        }else if(resource === 'password'){
+            const token = localStorage.getItem('token');
+            let old_password = params.data.old_password;
+            let new_password = params.data.new_password;
+            let username = params.data.username;
+
+            let update_url = `${config.PATH_USER_UPDATE_PWD}${username}`;
+            axios.defaults.headers['token'] = token;
+            const result = await axios.post(update_url, {
+                'old_password': old_password,
+                'new_password': new_password,
+            });
+
+            if(result.data.status == "success"){
+                if(result.data.code === 200){
+                    window.location.hash = "/users";
+                    return {
+                        data: {
+                            id: result.data.data.user.id,
+                        } 
+                    };
+                }else{
+
+                    return {
+                        data: {
+                            id: result.data.data.user.id,
+                        } 
+                    };
+                }
             }else{
                 return new Promise((resolve, reject) => setTimeout(reject, 1000));
             }

@@ -50,6 +50,7 @@ const UserCreate = (props) => {
             return '密码不一致';
         }
     }
+    
     return (
         <Create aside={<Aside />} redirect="show">
             <SimpleForm

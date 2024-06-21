@@ -10,6 +10,7 @@ import {
     Grid,
     useMediaQuery,
     Theme,
+    Box,
 } from '@mui/material';
 import jsonExport from 'jsonexport/dist';
 import {
@@ -32,6 +33,8 @@ import {
     DeleteButton,
     TopToolbar,
     CreateButton,
+    Button,
+    ReferenceField,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import { UserBulkActionButtonsGroup, getCommentFilters } from "../components/iUseBulkActionButtons"
 import {FilterButton} from "../components/iFilterButton"
@@ -75,78 +78,78 @@ const exporter = (records, fetchRelatedRecords) =>
         });
     });
 
-const GridItem = ({ record }) => {
-    return (
-        <Grid item key={record.id} sm={12} md={6} lg={4}>
-                            <Card
-                                sx={{
-                                    height: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
-                                <CardHeader
-                                    className="comment"
-                                    title={
-                                        <TextField
-                                            record={record}
-                                            source="author"
-                                        />
-                                    }
-                                    subheader={
-                                        <DateField
-                                            record={record}
-                                            source="created_at"
-                                        />
-                                    }
-                                    avatar={
-                                        <Avatar>
-                                            <PersonIcon />
-                                        </Avatar>
-                                    }
-                                />
-                                <CardContent>
-                                    <TextField
-                                        record={record}
-                                        source="content"
-                                        sx={{
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical',
-                                        }}
-                                    />
-                                </CardContent>
-                                <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                    <ThumbUpIcon />
-                                    <TextField
-                                        record={record}
-                                        source="support_count"
-                                    />
-                                    <EditButton record={record} label="编辑" />
-                                    <ShowButton record={record} label="展示" />
-                                    <DeleteButton record={record} label="删除" />
-                                </CardActions>
-                            </Card>
-                        </Grid>
-    )
-}
+
 const CommentGrid = () => {
     const { data } = useListContext();
     const translate = useTranslate();
     if (!data) return null;
 
+    const GridItem = ({ record }) => {
+        return (
+            <Card
+                sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                <CardHeader
+                    className="comment"
+                    title={
+                        <TextField
+                            record={record}
+                            source="author"
+                        />
+                    }
+                    subheader={
+                        <DateField
+                            record={record}
+                            source="created_at"
+                        />
+                    }
+                    avatar={
+                        <Avatar>
+                            <PersonIcon />
+                        </Avatar>
+                    }
+                />
+                <CardContent>
+                    <TextField source='article_id' record={record} />
+                    <TextField
+                        record={record}
+                        source="content"
+                        sx={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                        }}
+                    />
+                </CardContent>
+                <CardActions sx={{ justifyContent: 'flex-end' }}>
+                    <ThumbUpIcon />
+                    <TextField
+                        record={record}
+                        source="support_count"
+                    />
+                    <EditButton record={record} label="编辑" />
+                    <ShowButton record={record} label="展示" />
+                    <DeleteButton record={record} label="删除" />
+                </CardActions>
+            </Card>
+        )
+    }
+
     return (
         <Grid spacing={2} container>
             {
                 data.map(record => {
-
                     const grid_comp = !record.is_delete ? <GridItem record={record}/> : null;
                     return (
-                        <>
+                        <Grid item key={record.id} sm={12} md={6} lg={4}>
                             {grid_comp}
-                        </>
+                        </Grid>
                     )
                 })
             }
@@ -171,6 +174,15 @@ const CommentList = () => (
     </ListBase>
 );
 
+const test_actions = (values) => {
+    console.log('values', values);
+}
+
+const test_actions2 = () =>(
+    <div>
+        1
+    </div>
+)
 const ListView = () => {
     const isSmall = useMediaQuery<Theme>(theme => theme.breakpoints.down('md'));
     const { defaultTitle } = useListContext();
