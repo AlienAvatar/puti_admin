@@ -53,7 +53,7 @@ const EditActions = (props) =>{
     console.log('EditActions', props);
     return (
         <TopToolbar>
-            <CloneButton label="复制" className="button-clone" />
+            {/* <CloneButton label="复制" className="button-clone" /> */}
             <ShowButton label="展示"/>
         </TopToolbar>
     )

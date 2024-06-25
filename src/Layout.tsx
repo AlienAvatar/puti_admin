@@ -5,7 +5,7 @@ import { AppBar, Layout, InspectorButton, TitlePortal } from 'react-admin';
 const MyAppBar = () => (
     <AppBar>
         <TitlePortal />
-        <InspectorButton />
+        <InspectorButton label="设置"/>
     </AppBar>
 );
 

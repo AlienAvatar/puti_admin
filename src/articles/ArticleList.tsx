@@ -35,11 +35,11 @@ import {
     EditButton,
     ShowButton,
     usePermissions,
+    Pagination,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import * as config from "../config";
-import { article_data_context } from '../dataProvider';
 import {FilterButton} from "../components/iFilterButton"
 import { UserBulkActionButtonsGroup, getArticleFilters} from "../components/iUseBulkActionButtons"
 
@@ -149,6 +149,8 @@ const ArticleListDesktop = (props) => {
             sort={{ field: 'created_at', order: 'DESC' }}
             // exporter={exporter}
             actions={<ArticleListActions />}
+            // perPage={20}
+            pagination={<Pagination  rowsPerPageOptions={[20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260]} />}
         >
             <StyledDatagrid
                 bulkActionButtons={<ArticleListActions />}

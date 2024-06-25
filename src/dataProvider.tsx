@@ -10,8 +10,10 @@ import { useContext,createContext } from 'react';
 import { useGetOne, useRefresh, UseGetOneHookValue } from 'ra-core';
 import {getParameterFromUrl} from './utils';
 
-export let article_data_context = createContext(null);
-export let comment_data_context = createContext(null);
+export let user_page_context = createContext(null);
+export let article_page_context = createContext(null);
+export let comment_page_context = createContext(null);
+
 const dataProvider = {
 
     getList: async (resource, params) => {
@@ -131,6 +133,8 @@ const dataProvider = {
             });
             
             if(result != null && result.data.status == "success"){
+
+
                 return { 
                     data: result.data.users,
                     pageInfo: { page: 1, perPage: 10 },
@@ -157,7 +161,6 @@ const dataProvider = {
             })
 
             if(result != null && result.data.status == "success"){
-                article_data_context = result.data.data.article;
                 return { 
                     data: result.data.data.article,
                 };
@@ -178,7 +181,6 @@ const dataProvider = {
             })
 
             if(result != null && result.data.status == "success"){
-                comment_data_context = result.data.data.comment;
                 return { 
                     data: result.data.data.comment,
                 };
@@ -224,9 +226,8 @@ const dataProvider = {
             })
     
             if(result != null && result.data.status == "success" ){
-                comment_data_context = result.data.comments;
                 return { 
-                    data: comment_data_context,
+                    data: result.data.comments,
                     total: result.data.results
                 };
             }else{
