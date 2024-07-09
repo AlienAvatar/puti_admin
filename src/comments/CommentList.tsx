@@ -114,8 +114,9 @@ const CommentGrid = () => {
                     }
                 />
                 <CardContent>
-                    <TextField source='article_id' record={record} />
-                    <TextField
+                    <div><span>article id:</span><TextField source='article_id' record={record} /></div>
+
+                    <div><TextField
                         record={record}
                         source="content"
                         sx={{
@@ -125,7 +126,7 @@ const CommentGrid = () => {
                             WebkitLineClamp: 2,
                             WebkitBoxOrient: 'vertical',
                         }}
-                    />
+                    /></div>
                 </CardContent>
                 <CardActions sx={{ justifyContent: 'flex-end' }}>
                     <ThumbUpIcon />

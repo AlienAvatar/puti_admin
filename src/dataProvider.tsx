@@ -87,9 +87,8 @@ const dataProvider = {
             })
 
             if(result != null && result.data.status == "success"){
-                comment_data_context = result.data.comments;
                 return { 
-                    data: comment_data_context
+                    data: result.data.comments
                 };
             }else{
                 window.location.hash = "/login";
@@ -130,11 +129,9 @@ const dataProvider = {
                 headers: {
                     'token': token,
                 },
-            });
+            })
             
             if(result != null && result.data.status == "success"){
-
-
                 return { 
                     data: result.data.users,
                     pageInfo: { page: 1, perPage: 10 },
@@ -162,7 +159,7 @@ const dataProvider = {
 
             if(result != null && result.data.status == "success"){
                 return { 
-                    data: result.data.data.article,
+                    data: result.data.data.article.data.article,
                 };
             }else{
                 window.location.hash = "/login";

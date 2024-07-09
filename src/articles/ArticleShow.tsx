@@ -91,6 +91,10 @@ const ArticleShow = () => {
                                 { id: '圆满佛格', name: '圆满佛格' },
                                 { id: '妙谙五明', name: '妙谙五明' },
                                 { id: '渡生成就', name: '渡生成就' },
+                                { id: '羌佛文告', name: '羌佛文告' },
+                                { id: '总部文告', name: '总部文告' },
+                                { id: '大德文集', name: '大德文集' },
+                                { id: '圣德回复', name: '圣德回复' },
                             ]}
                         />
                        <CloneButton label="复制" />

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Fragment, memo } from 'react';
 import BookIcon from '@mui/icons-material/Book';
-import { Box, Chip, useMediaQuery } from '@mui/material';
+import { Box, Chip, useMediaQuery, Button } from '@mui/material';
 import { Theme, styled } from '@mui/material/styles';
 import lodashGet from 'lodash/get';
 import memoize from 'lodash/memoize';
@@ -36,6 +36,7 @@ import {
     ShowButton,
     usePermissions,
     Pagination,
+    useInfinitePaginationContext,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
@@ -140,21 +141,39 @@ const rowClick = memoize(permissions => (record) => {
     return Promise.resolve('show');
 });
 
+const LoadMore = () => {
+    const {
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+    } = useInfinitePaginationContext();
+    return hasNextPage ? (
+        <Box mt={1} textAlign="center">
+            <Button
+                disabled={isFetchingNextPage}
+                onClick={() => fetchNextPage()}
+            >
+                Load more
+            </Button>
+        </Box>
+    ) : null;
+};
+
 const ArticleListDesktop = (props) => {
     const { permissions } = usePermissions();
     return (
-        <List
+        <InfiniteList 
             filters={getArticleFilters()}
             filterDefaultValues={{is_delete: false}}
             sort={{ field: 'created_at', order: 'DESC' }}
-            // exporter={exporter}
             actions={<ArticleListActions />}
             // perPage={20}
-            pagination={<Pagination  rowsPerPageOptions={[20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260]} />}
+            // pagination={<Pagination  rowsPerPageOptions={[20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260]} />}
+            pagination={<LoadMore />}
         >
             <StyledDatagrid
                 bulkActionButtons={<ArticleListActions />}
-                rowClick={rowClick(permissions)}
+                // rowClick={rowClick(permissions)}
                 //expand={PostPanel}
                 omit={['average_note']}
                 // data={data_list}
@@ -191,7 +210,7 @@ const ArticleListDesktop = (props) => {
                     <ShowButton label="展示"/>
                 </ArticleListActionToolbar> 
             </StyledDatagrid>
-        </List>
+        </InfiniteList >
     )
 };
 

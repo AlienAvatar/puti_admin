@@ -315,9 +315,20 @@ const ArticleEdit = () => {
                         source="category"
                         label="类型" 
                         choices={[
-                            { id: 'tech', name: 'Tech' },
-                            { id: 'lifestyle', name: 'Lifestyle' },
-                            { id: 'people', name: 'People' },
+                            { id: '公告', name: '公告' },
+                            { id: '古佛降世', name: '古佛降世' },
+                            { id: '羌佛说法', name: '羌佛说法' },
+                            { id: '羌佛公告', name: '羌佛公告' },
+                            { id: '认证恭贺', name: '认证恭贺' },
+                            { id: '羌佛圣量', name: '羌佛圣量' },
+                            { id: '羌佛圣迹', name: '羌佛圣迹' },
+                            { id: '圆满佛格', name: '圆满佛格' },
+                            { id: '妙谙五明', name: '妙谙五明' },
+                            { id: '渡生成就', name: '渡生成就' },
+                            { id: '羌佛文告', name: '羌佛文告' },
+                            { id: '总部文告', name: '总部文告' },
+                            { id: '大德文集', name: '大德文集' },
+                            { id: '圣德回复', name: '圣德回复' },
                         ]}
                     />
                 </TabbedForm.Tab>

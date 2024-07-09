@@ -3,6 +3,7 @@
     "version": "4.16.18",
     "private": true,
     "scripts": {
+        "start": "set PORT=10003 && vite",
         "dev": "vite",
         "build": "vite build",
         "serve": "vite preview",
