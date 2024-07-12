@@ -13,7 +13,8 @@ import {getParameterFromUrl} from './utils';
 export let user_page_context = createContext(null);
 export let article_page_context = createContext(null);
 export let comment_page_context = createContext(null);
-
+export let upload_img_url = "unknown";
+// axios.defaults.headers.post['Content-Type'] = 'application/json';
 const dataProvider = {
 
     getList: async (resource, params) => {
@@ -307,12 +308,15 @@ const dataProvider = {
             }
         }else if(resource === 'articles'){
             const token = localStorage.getItem('token');
+            const upload_img_url = localStorage.getItem('upload_img_url');
             axios.defaults.headers['token'] = token;
+            axios.defaults.headers['Content-Type'] = 'application/json';
             const result = await axios.post(config.PATH_ARTICLE_CREATE, {
                 'title': params.data.title,
                 'author': params.data.author,
                 'content': params.data.content,
-                'category': params.data.category
+                'category': params.data.category,
+                'cover_img': upload_img_url
             });
 
             if(result != null && result.data.status == "success"){
@@ -320,6 +324,27 @@ const dataProvider = {
                 return { 
                     data: result.data.data.article,
                     pageInfo: { page: 1, perPage: 10 },
+                };
+            }else{
+                return new Promise((resolve, reject) => setTimeout(reject, 1000));
+            }
+        }else if(resource === 'upload'){
+            const formData = new FormData();
+            params.data.cover_img_file?.rawFile && formData.append("file", params.data.cover_img_file.rawFile);
+            params.data.title && formData.append("title", params.data.title);
+            params.data.content && formData.append("content", params.data.content);
+
+            const token = localStorage.getItem('token');
+            axios.defaults.headers['token'] = token;
+            axios.defaults.headers['Content-Type'] = 'multipart/form-data';
+            const result = await axios.post(config.PATH_ARTICLE_UPLOAD_IMG, formData);
+            if(result != null && result.data.status == "success"){
+                localStorage.setItem('upload_img_url', result.data.message);
+                return { 
+                    data: {
+                        id: 1,
+                        msg: result.data.message,   
+                    }
                 };
             }else{
                 return new Promise((resolve, reject) => setTimeout(reject, 1000));

@@ -28,6 +28,7 @@ import {
     TopToolbar,
     CreateButton,
     DeleteButton,
+    ImageField,
 } from 'react-admin';
 import ArticleTitle from './ArticleTitle';
 import { useState, useEffect } from 'react';
@@ -59,10 +60,14 @@ const ShowActions = () => (
  *
  * @returns 文章详情页面组件
  */
-const ArticleShow = () => {
+const ArticleShow = (props) => {
     const id = getParameterFromUrl(window.location.hash, 'articles');
     const controllerProps = useShowController({ resource: 'articles', id: id });
-
+    let cover_img_url = "";
+    if(controllerProps != null && controllerProps.record != null){
+        cover_img_url = controllerProps.record.cover_img;
+    }
+   
     return (
         <ShowContextProvider value={controllerProps} >
             <ShowView title={<ArticleTitle />} actions={ShowActions()}>
@@ -85,7 +90,7 @@ const ArticleShow = () => {
                                 { id: '古佛降世', name: '古佛降世' },
                                 { id: '羌佛说法', name: '羌佛说法' },
                                 { id: '羌佛公告', name: '羌佛公告' },
-                                { id: '认证恭贺', name: '认证恭贺' },
+                                { id: '认证恭祝', name: '认证恭祝' },
                                 { id: '羌佛圣量', name: '羌佛圣量' },
                                 { id: '羌佛圣迹', name: '羌佛圣迹' },
                                 { id: '圆满佛格', name: '圆满佛格' },
@@ -97,6 +102,8 @@ const ArticleShow = () => {
                                 { id: '圣德回复', name: '圣德回复' },
                             ]}
                         />
+                         {/* <ImageField source="cover_img" title="title" /> */}
+                         <img src={cover_img_url} />
                        <CloneButton label="复制" />
                     </TabbedShowLayout.Tab>
                     <TabbedShowLayout.Tab label="其它">
